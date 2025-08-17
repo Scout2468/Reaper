@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Reaper AI 🤖</h1>
+<input id="prompt" placeholder="Ask something">
+<button id="sendBtn">Send</button>
+<p id="response"></p>
+
+<script>
+document.getElementById("sendBtn").onclick = async () => {
+    const prompt = document.getElementById("prompt").value;
+    if(!prompt) { 
+        document.getElementById("response").innerText = "Type a question!";
+        return;
+    }
+    try {
+        const res = await fetch("/api/index", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({prompt})
+        });
+        const data = await res.json();
+        document.getElementById("response").innerText = data.answer;
+    } catch(e) {
+        document.getElementById("response").innerText = "Error contacting Reaper 🤖";
+        console.error(e);
+    }
+}
+</script>
+</body>
+</html>
