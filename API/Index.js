@@ -1,5 +1,7 @@
 export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
   const { prompt } = req.body;
   if (!prompt) return res.status(400).json({ error: "Prompt is empty" });
@@ -15,12 +17,8 @@ export default async function handler(req, res) {
         model: "openai/gpt-oss-20b",
         messages: [
           {
-            role: "system",
-            content: "You are Reaper, a chill, friendly AI with sarcasm."
-          },
-          {
             role: "user",
-            content: prompt
+            content: `You are Reaper, a chill, friendly AI with sarcasm. Respond to: "${prompt}"`
           }
         ]
       })
@@ -29,9 +27,12 @@ export default async function handler(req, res) {
     const data = await response.json();
     console.log("Groq full response:", JSON.stringify(data, null, 2));
 
-    const answer = data?.choices?.[0]?.message?.content || "Hmm… I got nothing. Try again?";
-    res.status(200).json({ answer });
+    let answer = "Hmm… I got nothing. Try again?";
+    if (data?.choices?.length > 0) {
+      answer = data.choices[0]?.message?.content || answer;
+    }
 
+    res.status(200).json({ answer });
   } catch (err) {
     console.error("Groq fetch error:", err);
     res.status(500).json({ error: "Groq request failed" });
