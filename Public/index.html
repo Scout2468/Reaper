@@ -14,11 +14,11 @@ document.getElementById("sendBtn").onclick = async () => {
         return;
     }
     try {
-        const res = await fetch("/api/index", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({prompt})
-        });
+        const res = await fetch("/api", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt })
+});
         const data = await res.json();
         document.getElementById("response").innerText = data.answer;
     } catch(e) {
