@@ -39,6 +39,7 @@
       transform: scale(1.05); 
       border: 2px solid #0077ff; 
     }
+    #deckCounter { text-align:center; margin-bottom:10px; font-weight:bold; }
   </style>
 </head>
 <body>
@@ -47,6 +48,7 @@
   <h2>Available Cards</h2>
   <div class="card-list" id="cardList"></div>
 
+  <div id="deckCounter">Total Cards: 0</div>
   <div class="deck-area">
     <h2>Your Deck</h2>
     <div class="deck" id="deckList"></div>
@@ -54,32 +56,18 @@
 
   <script>
     const cards = [
-      {
-        name: "Aoi Todo",
-        imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Aoi%20Todo.PNG",
-      },
-      {
-        name: "Divergent Fist",
-        imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Divergent%20Fist.PNG",
-      },
-      {
-        name: "Malevolent Shrine",
-        imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Malevolent%20Shrine.PNG",
-      },
-      {
-        name: "Sukuna",
-        imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Sukuna.PNG",
-      },
-      {
-        name: "Sukuna's Finger",
-        imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Sukuna's%20Finger.PNG",
-      },
+      { name: "Aoi Todo", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Aoi%20Todo.PNG" },
+      { name: "Divergent Fist", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Divergent%20Fist.PNG" },
+      { name: "Malevolent Shrine", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Malevolent%20Shrine.PNG" },
+      { name: "Sukuna", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Sukuna.PNG" },
+      { name: "Sukuna's Finger", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Sukuna's%20Finger.PNG" },
     ];
 
     const deck = [];
     const MAX_COPIES = 4;
     const cardListEl = document.getElementById('cardList');
     const deckListEl = document.getElementById('deckList');
+    const deckCounterEl = document.getElementById('deckCounter');
 
     function renderCards() {
       cardListEl.innerHTML = '';
@@ -94,13 +82,16 @@
 
     function renderDeck() {
       deckListEl.innerHTML = '';
+      const counts = {};
       deck.forEach((card, index) => {
+        counts[card.name] = (counts[card.name] || 0) + 1;
         const cardEl = document.createElement('div');
         cardEl.className = 'card';
-        cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name}`;
+        cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name} x${counts[card.name]}`;
         cardEl.onclick = () => removeFromDeck(index);
         deckListEl.appendChild(cardEl);
       });
+      deckCounterEl.innerText = `Total Cards: ${deck.length}`;
     }
 
     function addToDeck(index) {
@@ -120,6 +111,7 @@
     }
 
     renderCards();
+    renderDeck();
   </script>
 </body>
 </html>
