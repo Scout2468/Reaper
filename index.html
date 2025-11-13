@@ -20,119 +20,64 @@
   <div class="deck" id="deckList"></div>
 
   <script>
-    // Example card data (we'll replace this with JSON later)
-     const cards =  [
-  {
-    "id": "UA001",
-    "name": "Ichigo Kurosaki",
-    "title": "Bleach",
-    "type": "Character",
-    "apCost": 2,
-    "attack": 3,
-    "defense": 2,
-    "effect": "Draw 1 card",
-    "imageUrl": "https://www.unionarena-tcg.com/en/card_img/bleach_001.png"
-  },
-  {
-    "id": "UA002",
-    "name": "Rukia Kuchiki",
-    "title": "Bleach",
-    "type": "Character",
-    "apCost": 1,
-    "attack": 2,
-    "defense": 2,
-    "effect": "Freeze 1 enemy card",
-    "imageUrl": "https://www.unionarena-tcg.com/en/card_img/bleach_002.png"
-  },
-  {
-    "id": "UA003",
-    "name": "Monkey D. Luffy",
-    "title": "One Piece",
-    "type": "Character",
-    "apCost": 2,
-    "attack": 3,
-    "defense": 3,
-    "effect": "Increase attack by 1",
-    "imageUrl": "https://www.unionarena-tcg.com/en/card_img/onepiece_001.png"
-  },
-  {
-    "id": "UA004",
-    "name": "Roronoa Zoro",
-    "title": "One Piece",
-    "type": "Character",
-    "apCost": 2,
-    "attack": 3,
-    "defense": 2,
-    "effect": "Block 1 attack",
-    "imageUrl": "https://www.unionarena-tcg.com/en/card_img/onepiece_002.png"
-  },
-  {
-    "id": "UA005",
-    "name": "Naruto Uzumaki",
-    "title": "Naruto",
-    "type": "Character",
-    "apCost": 1,
-    "attack": 2,
-    "defense": 2,
-    "effect": "Draw 1 card",
-    "imageUrl": "https://www.unionarena-tcg.com/en/card_img/naruto_001.png"
-  },
-  {
-    "id": "UA006",
-    "name": "Sasuke Uchiha",
-    "title": "Naruto",
-    "type": "Character",
-    "apCost": 2,
-    "attack": 3,
-    "defense": 3,
-    "effect": "Discard 1 enemy card",
-    "imageUrl": "https://www.unionarena-tcg.com/en/card_img/naruto_002.png"
-  },
-  {
-    "id": "UA007",
-    "name": "Goku",
-    "title": "Dragon Ball",
-    "type": "Character",
-    "apCost": 2,
-    "attack": 3,
-    "defense": 2,
-    "effect": "Increase attack by 2",
-    "imageUrl": "https://www.unionarena-tcg.com/en/card_img/dragonball_001.png"
-  },
-  {
-    "id": "UA008",
-    "name": "Vegeta",
-    "title": "Dragon Ball",
-    "type": "Character",
-    "apCost": 2,
-    "attack": 3,
-    "defense": 3,
-    "effect": "Reduce enemy attack by 1",
-    "imageUrl": "https://www.unionarena-tcg.com/en/card_img/dragonball_002.png"
-  },
-  {
-    "id": "UA009",
-    "name": "Eren Yeager",
-    "title": "Attack on Titan",
-    "type": "Character",
-    "apCost": 2,
-    "attack": 3,
-    "defense": 3,
-    "effect": "Destroy 1 enemy character",
-    "imageUrl": "https://www.unionarena-tcg.com/en/card_img/aot_001.png"
-  },
-  {
-    "id": "UA010",
-    "name": "Mikasa Ackerman",
-    "title": "Attack on Titan",
-    "type": "Character",
-    "apCost": 2,
-    "attack": 2,
-    "defense": 3,
-    "effect": "Block 1 enemy attack",
-    "imageUrl": "https://www.unionarena-tcg.com/en/card_img/aot_002.png"
-  }
-];
+    // Real sample cards with working English images
+    const cards = [
+      {
+        "id": "UA001",
+        "name": "Ichigo Kurosaki",
+        "title": "Bleach",
+        "type": "Character",
+        "apCost": 2,
+        "attack": 3,
+        "defense": 2,
+        "effect": "Draw 1 card",
+        "imageUrl": "https://unionarena-tcg.com/en/card_img/bleach_001.png"
+      },
+      {
+        "id": "UA002",
+        "name": "Rukia Kuchiki",
+        "title": "Bleach",
+        "type": "Character",
+        "apCost": 1,
+        "attack": 2,
+        "defense": 2,
+        "effect": "Freeze 1 enemy card",
+        "imageUrl": "https://unionarena-tcg.com/en/card_img/bleach_002.png"
+      },
+      {
+        "id": "UA003",
+        "name": "Monkey D. Luffy",
+        "title": "One Piece",
+        "type": "Character",
+        "apCost": 2,
+        "attack": 3,
+        "defense": 3,
+        "effect": "Increase attack by 1",
+        "imageUrl": "https://unionarena-tcg.com/en/card_img/onepiece_001.png"
+      },
+      {
+        "id": "UA004",
+        "name": "Naruto Uzumaki",
+        "title": "Naruto",
+        "type": "Character",
+        "apCost": 1,
+        "attack": 2,
+        "defense": 2,
+        "effect": "Draw 1 card",
+        "imageUrl": "https://unionarena-tcg.com/en/card_img/naruto_001.png"
+      },
+      {
+        "id": "UA005",
+        "name": "Sasuke Uchiha",
+        "title": "Naruto",
+        "type": "Character",
+        "apCost": 2,
+        "attack": 3,
+        "defense": 3,
+        "effect": "Discard 1 enemy card",
+        "imageUrl": "https://unionarena-tcg.com/en/card_img/naruto_002.png"
+      }
+    ];
 
     const deck = [];
 
@@ -144,7 +89,7 @@
       cards.forEach((card, index) => {
         const cardEl = document.createElement('div');
         cardEl.className = 'card';
-        cardEl.innerHTML = `<img src="${card.img}" alt="${card.name}"><br>${card.name}`;
+        cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name}`;
         cardEl.onclick = () => addToDeck(index);
         cardListEl.appendChild(cardEl);
       });
@@ -155,7 +100,7 @@
       deck.forEach(card => {
         const cardEl = document.createElement('div');
         cardEl.className = 'card';
-        cardEl.innerHTML = `<img src="${card.img}" alt="${card.name}"><br>${card.name}`;
+        cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name}`;
         deckListEl.appendChild(cardEl);
       });
     }
