@@ -1,86 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Union Arena Deck Builder</title>
+  <title>Blue Deck Builder</title>
   <style>
     body { font-family: sans-serif; background: #f0f0f0; padding: 10px; }
-    .card-list, .deck { display: flex; flex-wrap: wrap; gap: 10px; }
+    h1 { text-align: center; }
+    .card-list, .deck { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
     .card { width: 100px; text-align: center; cursor: pointer; }
     .card img { width: 100%; border: 1px solid #333; border-radius: 5px; }
-    h2 { margin-top: 20px; }
+    .deck-area { margin-top: 20px; }
   </style>
 </head>
 <body>
-  <h1>Union Arena Deck Builder</h1>
+  <h1>Blue Deck</h1>
 
   <h2>Available Cards</h2>
   <div class="card-list" id="cardList"></div>
 
-  <h2>Your Deck</h2>
-  <div class="deck" id="deckList"></div>
+  <div class="deck-area">
+    <h2>Your Deck</h2>
+    <div class="deck" id="deckList"></div>
+  </div>
 
   <script>
-    // Placeholder hosted images to ensure they display
+    // Sample cards (replace these with your own images later)
     const cards = [
-      {
-        "id": "1",
-        "name": "Ichigo Kurosaki",
-        "title": "Bleach",
-        "type": "Character",
-        "apCost": 2,
-        "attack": 3,
-        "defense": 2,
-        "effect": "Draw 1 card",
-        "imageUrl": "https://i.ibb.co/8P0VvLd/ichigo.png"
-      },
-      {
-        "id": "2",
-        "name": "Rukia Kuchiki",
-        "title": "Bleach",
-        "type": "Character",
-        "apCost": 1,
-        "attack": 2,
-        "defense": 2,
-        "effect": "Freeze 1 enemy card",
-        "imageUrl": "https://i.ibb.co/Jq5JXJx/rukia.png"
-      },
-      {
-        "id": "3",
-        "name": "Monkey D. Luffy",
-        "title": "One Piece",
-        "type": "Character",
-        "apCost": 2,
-        "attack": 3,
-        "defense": 3,
-        "effect": "Increase attack by 1",
-        "imageUrl": "https://i.ibb.co/x7rX6gZ/luffy.png"
-      },
-      {
-        "id": "4",
-        "name": "Naruto Uzumaki",
-        "title": "Naruto",
-        "type": "Character",
-        "apCost": 1,
-        "attack": 2,
-        "defense": 2,
-        "effect": "Draw 1 card",
-        "imageUrl": "https://i.ibb.co/Lh9jZgX/naruto.png"
-      },
-      {
-        "id": "5",
-        "name": "Sasuke Uchiha",
-        "title": "Naruto",
-        "type": "Character",
-        "apCost": 2,
-        "attack": 3,
-        "defense": 3,
-        "effect": "Discard 1 enemy card",
-        "imageUrl": "https://i.ibb.co/6RJ7LVJ/sasuke.png"
-      }
+      { id: 1, name: "Gojo Satoru", title: "JJK", imageUrl: "https://i.ibb.co/2sF9khZ/gojo.png" },
+      { id: 2, name: "Megumi Fushiguro", title: "JJK", imageUrl: "https://i.ibb.co/xFyPS6Y/megumi.png" },
+      { id: 3, name: "Nobara Kugisaki", title: "JJK", imageUrl: "https://i.ibb.co/WPBZQpZ/nobara.png" },
+      { id: 4, name: "Yuji Itadori", title: "JJK", imageUrl: "https://i.ibb.co/pfJpJQG/yuji.png" },
+      { id: 5, name: "Toge Inumaki", title: "JJK", imageUrl: "https://i.ibb.co/VwBHRpp/toge.png" }
     ];
 
     const deck = [];
-
     const cardListEl = document.getElementById('cardList');
     const deckListEl = document.getElementById('deckList');
 
@@ -89,7 +41,7 @@
       cards.forEach((card, index) => {
         const cardEl = document.createElement('div');
         cardEl.className = 'card';
-        cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name}`;
+        cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name}<br><small>${card.title}</small>`;
         cardEl.onclick = () => addToDeck(index);
         cardListEl.appendChild(cardEl);
       });
