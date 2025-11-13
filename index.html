@@ -5,17 +5,17 @@
   <style>
     body { font-family: sans-serif; background: #f0f0f0; padding: 10px; }
     h1 { text-align: center; }
-    .card-list { 
+    .card-list, .deck { 
       display: grid; 
       gap: 10px; 
-      justify-content: center; 
+    }
+    .card-list { 
       grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
       margin-bottom: 20px; 
+      justify-content: center;
     }
     .deck { 
-      display: grid; 
       grid-auto-flow: column; 
-      gap: 10px; 
       overflow-x: auto; 
       padding: 10px; 
       border: 2px solid #333; 
@@ -24,7 +24,7 @@
     }
     .card { 
       text-align: center; 
-      cursor: pointer; 
+      cursor: grab; 
       transition: transform 0.1s, border 0.1s; 
       width: 100px; 
     }
@@ -63,8 +63,9 @@
       { name: "Sukuna's Finger", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Sukuna's%20Finger.PNG" },
     ];
 
-    const deck = [];
     const MAX_COPIES = 4;
+    let deck = JSON.parse(localStorage.getItem('deck') || '[]');
+
     const cardListEl = document.getElementById('cardList');
     const deckListEl = document.getElementById('deckList');
     const deckCounterEl = document.getElementById('deckCounter');
@@ -74,8 +75,11 @@
       cards.forEach((card, index) => {
         const cardEl = document.createElement('div');
         cardEl.className = 'card';
+        cardEl.draggable = true;
         cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name}`;
-        cardEl.onclick = () => addToDeck(index);
+        cardEl.ondragstart = (e) => {
+          e.dataTransfer.setData('text/plain', index);
+        };
         cardListEl.appendChild(cardEl);
       });
     }
@@ -87,12 +91,30 @@
         counts[card.name] = (counts[card.name] || 0) + 1;
         const cardEl = document.createElement('div');
         cardEl.className = 'card';
+        cardEl.draggable = true;
         cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name} x${counts[card.name]}`;
-        cardEl.onclick = () => removeFromDeck(index);
+        cardEl.ondragstart = (e) => {
+          e.dataTransfer.setData('remove', index);
+        };
         deckListEl.appendChild(cardEl);
       });
       deckCounterEl.innerText = `Total Cards: ${deck.length}`;
+      localStorage.setItem('deck', JSON.stringify(deck));
     }
+
+    deckListEl.ondragover = (e) => e.preventDefault();
+    deckListEl.ondrop = (e) => {
+      e.preventDefault();
+      const index = e.dataTransfer.getData('text/plain');
+      if(index !== '') addToDeck(parseInt(index));
+    };
+
+    cardListEl.ondragover = (e) => e.preventDefault();
+    cardListEl.ondrop = (e) => {
+      e.preventDefault();
+      const removeIndex = e.dataTransfer.getData('remove');
+      if(removeIndex !== '') removeFromDeck(parseInt(removeIndex));
+    };
 
     function addToDeck(index) {
       const card = cards[index];
