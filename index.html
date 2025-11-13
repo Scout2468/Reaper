@@ -98,10 +98,16 @@
         cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name}`;
         cardEl.ondragstart = (e) => e.dataTransfer.setData('text/plain', index);
 
-        // Preview hover
+        // Desktop hover preview
         cardEl.onmouseenter = (e) => showPreview(card, e);
         cardEl.onmousemove = (e) => movePreview(e);
         cardEl.onmouseleave = hidePreview;
+
+        // Mobile tap preview
+        cardEl.onclick = (e) => {
+          e.stopPropagation();
+          togglePreview(card);
+        };
 
         cardListEl.appendChild(cardEl);
       });
@@ -118,10 +124,16 @@
         cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name} x${counts[card.name]}`;
         cardEl.ondragstart = (e) => e.dataTransfer.setData('remove', index);
 
-        // Preview hover
+        // Desktop hover preview
         cardEl.onmouseenter = (e) => showPreview(card, e);
         cardEl.onmousemove = (e) => movePreview(e);
         cardEl.onmouseleave = hidePreview;
+
+        // Mobile tap preview
+        cardEl.onclick = (e) => {
+          e.stopPropagation();
+          togglePreview(card);
+        };
 
         deckListEl.appendChild(cardEl);
       });
@@ -129,7 +141,6 @@
       localStorage.setItem('deck', JSON.stringify(deck));
     }
 
-    // Drag & drop
     deckListEl.ondragover = (e) => e.preventDefault();
     deckListEl.ondrop = (e) => {
       e.preventDefault();
@@ -160,8 +171,11 @@
       renderDeck();
     }
 
-    // Preview functions
+    // Preview logic
+    let mobilePreviewOpen = false;
+
     function showPreview(card, event) {
+      if (mobilePreviewOpen) return;
       previewEl.style.display = 'block';
       previewEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name}`;
       movePreview(event);
@@ -174,8 +188,31 @@
     }
 
     function hidePreview() {
+      if (mobilePreviewOpen) return;
       previewEl.style.display = 'none';
     }
+
+    function togglePreview(card) {
+      if (mobilePreviewOpen) {
+        hidePreview();
+        mobilePreviewOpen = false;
+        return;
+      }
+      previewEl.style.display = 'block';
+      previewEl.style.left = '50%';
+      previewEl.style.top = '50%';
+      previewEl.style.transform = 'translate(-50%, -50%)';
+      previewEl.style.pointerEvents = 'auto';
+      previewEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name}`;
+      mobilePreviewOpen = true;
+    }
+
+    document.body.addEventListener('click', (e) => {
+      if (mobilePreviewOpen && !e.target.closest('.card')) {
+        hidePreview();
+        mobilePreviewOpen = false;
+      }
+    });
 
     renderCards();
     renderDeck();
