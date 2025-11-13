@@ -1,255 +1,153 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Union Arena Deck Builder</title>
-  <style>
-    body { font-family: sans-serif; background: #f0f0f0; padding: 10px; }
-    h1 { text-align: center; }
-    #filters { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 15px; }
-    #filters label { font-weight: bold; }
-    .card-list, .deck { display: grid; gap: 10px; }
-    .card-list { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); margin-bottom: 20px; justify-content: center; }
-    .deck { grid-auto-flow: column; overflow-x: auto; padding: 10px; border: 2px solid #333; border-radius: 5px; background: #fff; }
-    .card { text-align: center; cursor: pointer; transition: transform 0.1s, border 0.1s; width: 100px; }
-    .card img { width: 100%; height: 140px; object-fit: cover; border: 1px solid #333; border-radius: 5px; }
-    .card:hover { transform: scale(1.05); border: 2px solid #0077ff; }
-    #deckCounter { text-align:center; margin-bottom:10px; font-weight:bold; }
-
-    /* Card preview overlay */
-    .overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      visibility: hidden;
-      opacity: 0;
-      transition: opacity 0.2s;
-      flex-direction: column;
-    }
-    .overlay.active {
-      visibility: visible;
-      opacity: 1;
-    }
-    .overlay img {
-      width: 300px;
-      max-height: 80%;
-      border-radius: 10px;
-      border: 2px solid white;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-      margin-bottom: 10px;
-    }
-    .close-btn {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      color: white;
-      font-size: 30px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .btn-group {
-      display: flex;
-      gap: 10px;
-    }
-    button {
-      padding: 8px 12px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .add-btn { background: #0077ff; color: white; }
-    .remove-btn { background: #ff3333; color: white; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reaper Deck Builder</title>
+<style>
+  body { font-family: sans-serif; margin: 20px; background: #f0f0f0; }
+  #filters { margin-bottom: 20px; }
+  select { margin-right: 10px; padding: 5px; }
+  #cardsContainer { display: flex; flex-wrap: wrap; gap: 10px; }
+  .card { width: 120px; cursor: pointer; border: 1px solid #ccc; padding: 5px; background: white; text-align: center; }
+  .deck { margin-top: 20px; }
+  .deckCard { width: 80px; cursor: pointer; border: 1px solid #333; padding: 2px; background: #eee; text-align: center; }
+  #cardModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; }
+  #cardModal img { max-width: 80%; max-height: 80%; }
+</style>
 </head>
 <body>
-  <h1>Union Arena Deck Builder</h1>
 
-  <!-- FILTER SECTION -->
-  <div id="filters">
-    <label>Color:
-      <select id="colorFilter">
-        <option value="">All</option>
-        <option value="Blue">Blue</option>
-        <option value="Red">Red</option>
-        <option value="Yellow">Yellow</option>
-        <option value="Green">Green</option>
-        <option value="Purple">Purple</option>
-      </select>
-    </label>
+<h1>Reaper Deck Builder</h1>
 
-    <label>IP:
-      <select id="ipFilter">
-        <option value="">All</option>
-        <option value="Jujutsu Kaisen">Jujutsu Kaisen</option>
-        <option value="Bleach">Bleach</option>
-        <option value="Black Clover">Black Clover</option>
-        <option value="Hunter x Hunter">Hunter x Hunter</option>
-        <option value="One Punch Man">One Punch Man</option>
-        <option value="Original">Original</option>
-      </select>
-    </label>
+<div id="filters">
+  <select id="colorFilter"><option>All</option></select>
+  <select id="ipFilter"><option>All</option></select>
+  <select id="typeFilter"><option>All</option></select>
+</div>
 
-    <label>Type:
-      <select id="typeFilter">
-        <option value="">All</option>
-        <option value="Character">Character</option>
-        <option value="Site">Site</option>
-        <option value="Event">Event</option>
-      </select>
-    </label>
+<div id="cardsContainer"></div>
 
-    <label>Energy:
-      <select id="energyFilter">
-        <option value="">All</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-      </select>
-    </label>
-  </div>
+<h2>My Deck</h2>
+<div id="deckContainer" class="deck"></div>
 
-  <h2>Available Cards</h2>
-  <div class="card-list" id="cardList"></div>
+<div id="cardModal"><img id="modalImage" src="" alt="Card"></div>
 
-  <div id="deckCounter">Total Cards: 0</div>
-  <div class="deck-area">
-    <h2>Your Deck</h2>
-    <div class="deck" id="deckList"></div>
-  </div>
+<script>
+const cards = [
+  // BLUE — Jujutsu Kaisen
+  { name: "Aoi Todo", color: "Blue", ip: "Jujutsu Kaisen", type: "Character", image: "Images/Aoi Todo.PNG" },
+  { name: "Divergent Fist", color: "Blue", ip: "Jujutsu Kaisen", type: "Event", image: "Images/Divergent Fist.PNG" },
+  { name: "Malevolent Shrine", color: "Blue", ip: "Jujutsu Kaisen", type: "Site", image: "Images/Malevolent Shrine.PNG" },
+  { name: "Sukuna", color: "Blue", ip: "Jujutsu Kaisen", type: "Character", image: "Images/Sukuna.PNG" },
+  { name: "Sukuna's Finger", color: "Blue", ip: "Jujutsu Kaisen", type: "Event", image: "Images/Sukuna's Finger.PNG" },
 
-  <!-- Card preview overlay -->
-  <div id="cardOverlay" class="overlay">
-    <span class="close-btn" id="closeOverlay">&times;</span>
-    <img id="overlayImage" src="" alt="Card preview">
-    <div class="btn-group">
-      <button class="add-btn" id="addCardBtn">Add to Deck</button>
-      <button class="remove-btn" id="removeCardBtn">Remove from Deck</button>
-    </div>
-  </div>
+  // GREEN — Hunter x Hunter
+  { name: "Kurapika", color: "Green", ip: "Hunter x Hunter", type: "Character", image: "Images/Kurapika.PNG" },
+  { name: "Kurapika 2", color: "Green", ip: "Hunter x Hunter", type: "Character", image: "Images/Kurapika 2.PNG" },
+  { name: "Kiriko", color: "Green", ip: "Hunter x Hunter", type: "Character", image: "Images/Kiriko.PNG" },
+  { name: "Wing", color: "Green", ip: "Hunter x Hunter", type: "Character", image: "Images/Wing.PNG" },
 
-  <script>
-    const cards = [
-      // --- OLD CARDS ---
-      { name: "Aoi Todo", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Aoi%20Todo.PNG", color:"Blue", ip:"Jujutsu Kaisen", type:"Character", energy:2 },
-      { name: "Divergent Fist", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Divergent%20Fist.PNG", color:"Blue", ip:"Jujutsu Kaisen", type:"Action", energy:1 },
-      { name: "Malevolent Shrine", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Malevolent%20Shrine.PNG", color:"Red", ip:"Jujutsu Kaisen", type:"Event", energy:2 },
-      { name: "Sukuna", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Sukuna.PNG", color:"Red", ip:"Jujutsu Kaisen", type:"Character", energy:3 },
-      { name: "Sukuna's Finger", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Sukuna's%20Finger.PNG", color:"Red", ip:"Jujutsu Kaisen", type:"Event", energy:1 },
+  // YELLOW — One Punch Man
+  { name: "Bomb", color: "Yellow", ip: "One Punch Man", type: "Event", image: "Images/Bomb.PNG" },
+  { name: "Bomb 2", color: "Yellow", ip: "One Punch Man", type: "Event", image: "Images/Bomb 2.PNG" },
+  { name: "King", color: "Yellow", ip: "One Punch Man", type: "Character", image: "Images/King.PNG" },
+  { name: "King 2", color: "Yellow", ip: "One Punch Man", type: "Character", image: "Images/King 2.PNG" },
+  { name: "Genos", color: "Yellow", ip: "One Punch Man", type: "Character", image: "Images/Genos.PNG" },
 
-      // --- NEW CARDS ---
-      { name: "Asta", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Asta.PNG", color:"Red", ip:"Black Clover", type:"Character", energy:2 },
-      { name: "Bomb 2", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Bomb%202.PNG", color:"Red", ip:"Original", type:"Event", energy:1 },
-      { name: "Bomb", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Bomb.PNG", color:"Red", ip:"Original", type:"Event", energy:1 },
-      { name: "Byakuya Kuchiki 2", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Byakuya%20Kuchiki%202.PNG", color:"Blue", ip:"Bleach", type:"Character", energy:3 },
-      { name: "Byakuya Kuchiki", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Byakuya%20Kuchiki.PNG", color:"Blue", ip:"Bleach", type:"Character", energy:3 },
-      { name: "Gauche Adlai", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Gauche%20Adlai.PNG", color:"Blue", ip:"Black Clover", type:"Character", energy:2 },
-      { name: "Genos", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Genos.PNG", color:"Yellow", ip:"One Punch Man", type:"Character", energy:3 },
-      { name: "Grey", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Grey.PNG", color:"Blue", ip:"Black Clover", type:"Character", energy:2 },
-      { name: "King 2", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/King%202.PNG", color:"Yellow", ip:"One Punch Man", type:"Character", energy:2 },
-      { name: "King", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/King.PNG", color:"Yellow", ip:"One Punch Man", type:"Character", energy:2 },
-      { name: "Kiriko", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Kiriko.PNG", color:"Red", ip:"Original", type:"Character", energy:1 },
-      { name: "Kurapika 2", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Kurapika%202.PNG", color:"Blue", ip:"Hunter x Hunter", type:"Character", energy:3 },
-      { name: "Kurapika", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Kurapika.PNG", color:"Blue", ip:"Hunter x Hunter", type:"Character", energy:3 },
-      { name: "Liebe", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Liebe.PNG", color:"Red", ip:"Black Clover", type:"Character", energy:2 },
-      { name: "Loropechika", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Loropechika.PNG", color:"Red", ip:"Original", type:"Character", energy:2 },
-      { name: "Nel Tu", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Nel%20Tu.PNG", color:"Blue", ip:"Bleach", type:"Character", energy:2 },
-      { name: "Renji Abarai 2", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Renji%20Abarai%202.PNG", color:"Blue", ip:"Bleach", type:"Character", energy:3 },
-      { name: "Renji Abarai", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Renji%20Abarai.PNG", color:"Blue", ip:"Bleach", type:"Character", energy:3 },
-      { name: "Wing", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Wing.PNG", color:"Yellow", ip:"Original", type:"Character", energy:1 }
-    ];
+  // PURPLE — Bleach
+  { name: "Byakuya Kuchiki", color: "Purple", ip: "Bleach", type: "Character", image: "Images/Byakuya Kuchiki.PNG" },
+  { name: "Byakuya Kuchiki 2", color: "Purple", ip: "Bleach", type: "Character", image: "Images/Byakuya Kuchiki 2.PNG" },
+  { name: "Renji Abarai", color: "Purple", ip: "Bleach", type: "Character", image: "Images/Renji Abarai.PNG" },
+  { name: "Renji Abarai 2", color: "Purple", ip: "Bleach", type: "Character", image: "Images/Renji Abarai 2.PNG" },
+  { name: "Nel Tu", color: "Purple", ip: "Bleach", type: "Character", image: "Images/Nel Tu.PNG" },
 
-    const MAX_COPIES = 4;
-    let deck = JSON.parse(localStorage.getItem('deck') || '[]');
-    let currentCard = null;
+  // RED — Black Clover
+  { name: "Grey", color: "Red", ip: "Black Clover", type: "Character", image: "Images/Grey.PNG" },
+  { name: "Liebe", color: "Red", ip: "Black Clover", type: "Character", image: "Images/Liebe.PNG" },
+  { name: "Loropechika", color: "Red", ip: "Black Clover", type: "Character", image: "Images/Loropechika.PNG" },
+  { name: "Asta", color: "Red", ip: "Black Clover", type: "Character", image: "Images/Asta.PNG" },
+  { name: "Gauche Adlai", color: "Red", ip: "Black Clover", type: "Character", image: "Images/Gauche Adlai.PNG" },
+];
 
-    const cardListEl = document.getElementById('cardList');
-    const deckListEl = document.getElementById('deckList');
-    const deckCounterEl = document.getElementById('deckCounter');
-    const overlay = document.getElementById('cardOverlay');
-    const overlayImage = document.getElementById('overlayImage');
-    const closeOverlay = document.getElementById('closeOverlay');
-    const addCardBtn = document.getElementById('addCardBtn');
-    const removeCardBtn = document.getElementById('removeCardBtn');
+// Populate filters
+const colors = [...new Set(cards.map(card => card.color))];
+const ips = [...new Set(cards.map(card => card.ip))];
+const types = [...new Set(cards.map(card => card.type))];
 
-    const colorFilter = document.getElementById('colorFilter');
-    const ipFilter = document.getElementById('ipFilter');
-    const typeFilter = document.getElementById('typeFilter');
-    const energyFilter = document.getElementById('energyFilter');
+function populateFilters() {
+  const colorFilter = document.getElementById("colorFilter");
+  const ipFilter = document.getElementById("ipFilter");
+  const typeFilter = document.getElementById("typeFilter");
 
-    function applyFilters() {
-      let filteredCards = cards;
+  colors.forEach(color => { const option = document.createElement("option"); option.value = color; option.textContent = color; colorFilter.appendChild(option); });
+  ips.forEach(ip => { const option = document.createElement("option"); option.value = ip; option.textContent = ip; ipFilter.appendChild(option); });
+  types.forEach(type => { const option = document.createElement("option"); option.value = type; option.textContent = type; typeFilter.appendChild(option); });
+}
 
-      if (colorFilter.value) filteredCards = filteredCards.filter(c => c.color === colorFilter.value);
-      if (ipFilter.value) filteredCards = filteredCards.filter(c => c.ip === ipFilter.value);
-      if (typeFilter.value) filteredCards = filteredCards.filter(c => c.type === typeFilter.value);
-      if (energyFilter.value) filteredCards = filteredCards.filter(c => c.energy === parseInt(energyFilter.value));
+// Display cards
+function displayCards(cardList) {
+  const container = document.getElementById("cardsContainer");
+  container.innerHTML = "";
+  cardList.forEach(card => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `<img src="${card.image}" alt="${card.name}" style="width:100px;"><br>${card.name}`;
+    div.addEventListener("click", () => showCard(card));
+    container.appendChild(div);
+  });
+}
 
-      renderCards(filteredCards);
-    }
+// Deck building
+const deck = [];
+function showCard(card) {
+  const modal = document.getElementById("cardModal");
+  const img = document.getElementById("modalImage");
+  img.src = card.image;
+  modal.style.display = "flex";
+  modal.onclick = () => modal.style.display = "none";
+  if (!deck.includes(card)) {
+    deck.push(card);
+    updateDeck();
+  }
+}
 
-    [colorFilter, ipFilter, typeFilter, energyFilter].forEach(select => {
-      select.addEventListener('change', applyFilters);
+function updateDeck() {
+  const deckContainer = document.getElementById("deckContainer");
+  deckContainer.innerHTML = "";
+  deck.forEach(card => {
+    const div = document.createElement("div");
+    div.className = "deckCard";
+    div.innerHTML = `<img src="${card.image}" alt="${card.name}" style="width:60px;"><br>${card.name}`;
+    div.addEventListener("click", () => {
+      deck.splice(deck.indexOf(card), 1);
+      updateDeck();
     });
+    deckContainer.appendChild(div);
+  });
+}
 
-    function renderCards(list = cards) {
-      cardListEl.innerHTML = '';
-      list.forEach((card) => {
-        const cardEl = document.createElement('div');
-        cardEl.className = 'card';
-        cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name}`;
-        cardEl.onclick = () => showCard(card);
-        cardListEl.appendChild(cardEl);
-      });
-    }
+// Filtering
+function filterCards() {
+  const selectedColor = document.getElementById("colorFilter").value;
+  const selectedIP = document.getElementById("ipFilter").value;
+  const selectedType = document.getElementById("typeFilter").value;
 
-    function renderDeck() {
-      deckListEl.innerHTML = '';
-      const counts = {};
-      deck.forEach((card) => { counts[card.name] = (counts[card.name] || 0) + 1; });
-      const uniqueCards = Array.from(new Set(deck.map(c => c.name))).map(name => deck.find(c => c.name === name));
-      uniqueCards.forEach((card) => {
-        const cardEl = document.createElement('div');
-        cardEl.className = 'card';
-        cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name} x${counts[card.name]}`;
-        cardEl.onclick = () => showCard(card);
-        deckListEl.appendChild(cardEl);
-      });
-      deckCounterEl.innerText = `Total Cards: ${deck.length}`;
-      localStorage.setItem('deck', JSON.stringify(deck));
-    }
+  let filtered = cards;
+  if (selectedColor !== "All") filtered = filtered.filter(c => c.color === selectedColor);
+  if (selectedIP !== "All") filtered = filtered.filter(c => c.ip === selectedIP);
+  if (selectedType !== "All") filtered = filtered.filter(c => c.type === selectedType);
 
-    function addToDeck(card) {
-      const count = deck.filter(c => c.name === card.name).length;
-      if (count >= MAX_COPIES) { alert(`Max ${MAX_COPIES} copies of ${card.name} allowed!`); return; }
-      deck.push(card);
-      renderDeck();
-    }
+  displayCards(filtered);
+}
 
-    function removeFromDeck(card) {
-      const index = deck.findIndex(c => c.name === card.name);
-      if (index > -1) { deck.splice(index, 1); renderDeck(); }
-      else { alert(`${card.name} is not in your deck!`); }
-    }
+populateFilters();
+filterCards();
 
-    function showCard(card) {
-      currentCard = card;
-      overlayImage.src = card.imageUrl;
-      overlay.classList.add('active');
-    }
+document.getElementById("colorFilter").addEventListener("change", filterCards);
+document.getElementById("ipFilter").addEventListener("change", filterCards);
+document.getElementById("typeFilter").addEventListener("change", filterCards);
 
-    function hideCard() { overlay.classList.remove('active'); }
-
-    addCardBtn.onclick = () => { if (currentCard) addToDeck(currentCard); };
-    removeCardBtn.onclick = () => { if (currentCard) removeFromDeck(currentCard); };
-    closeOverlay.onclick = hideCard;
-    overlay.onclick = (e) => { if (e.target === overlay) hideCard(); };
-
-    renderCards();
-    renderDeck();
-  </script>
+</script>
 </body>
 </html>
