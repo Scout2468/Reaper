@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Union Arena Deck Builder</title>
+  <style>
+    body { font-family: sans-serif; background: #f0f0f0; padding: 10px; }
+    .card-list, .deck { display: flex; flex-wrap: wrap; gap: 10px; }
+    .card { width: 100px; text-align: center; cursor: pointer; }
+    .card img { width: 100%; border: 1px solid #333; border-radius: 5px; }
+    h2 { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Union Arena Deck Builder</h1>
+
+  <h2>Available Cards</h2>
+  <div class="card-list" id="cardList"></div>
+
+  <h2>Your Deck</h2>
+  <div class="deck" id="deckList"></div>
+
+  <script>
+    // Example card data (we'll replace this with JSON later)
+    const cards = [
+      {name: "Card A", img: "https://example.com/cardA.png"},
+      {name: "Card B", img: "https://example.com/cardB.png"},
+      {name: "Card C", img: "https://example.com/cardC.png"}
+    ];
+
+    const deck = [];
+
+    const cardListEl = document.getElementById('cardList');
+    const deckListEl = document.getElementById('deckList');
+
+    function renderCards() {
+      cardListEl.innerHTML = '';
+      cards.forEach((card, index) => {
+        const cardEl = document.createElement('div');
+        cardEl.className = 'card';
+        cardEl.innerHTML = `<img src="${card.img}" alt="${card.name}"><br>${card.name}`;
+        cardEl.onclick = () => addToDeck(index);
+        cardListEl.appendChild(cardEl);
+      });
+    }
+
+    function renderDeck() {
+      deckListEl.innerHTML = '';
+      deck.forEach(card => {
+        const cardEl = document.createElement('div');
+        cardEl.className = 'card';
+        cardEl.innerHTML = `<img src="${card.img}" alt="${card.name}"><br>${card.name}`;
+        deckListEl.appendChild(cardEl);
+      });
+    }
+
+    function addToDeck(index) {
+      deck.push(cards[index]);
+      renderDeck();
+    }
+
+    renderCards();
+  </script>
+</body>
+</html>
