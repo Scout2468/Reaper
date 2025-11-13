@@ -27,6 +27,7 @@
       cursor: grab; 
       transition: transform 0.1s, border 0.1s; 
       width: 100px; 
+      position: relative;
     }
     .card img { 
       width: 100%; 
@@ -40,6 +41,21 @@
       border: 2px solid #0077ff; 
     }
     #deckCounter { text-align:center; margin-bottom:10px; font-weight:bold; }
+
+    /* Preview pop-up */
+    #preview {
+      position: fixed;
+      display: none;
+      pointer-events: none;
+      border: 2px solid #0077ff;
+      background: #fff;
+      padding: 5px;
+      border-radius: 5px;
+      z-index: 1000;
+      width: 200px;
+      text-align: center;
+    }
+    #preview img { width: 100%; height: auto; border-radius: 5px; }
   </style>
 </head>
 <body>
@@ -53,6 +69,8 @@
     <h2>Your Deck</h2>
     <div class="deck" id="deckList"></div>
   </div>
+
+  <div id="preview"></div>
 
   <script>
     const cards = [
@@ -69,6 +87,7 @@
     const cardListEl = document.getElementById('cardList');
     const deckListEl = document.getElementById('deckList');
     const deckCounterEl = document.getElementById('deckCounter');
+    const previewEl = document.getElementById('preview');
 
     function renderCards() {
       cardListEl.innerHTML = '';
@@ -77,9 +96,13 @@
         cardEl.className = 'card';
         cardEl.draggable = true;
         cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name}`;
-        cardEl.ondragstart = (e) => {
-          e.dataTransfer.setData('text/plain', index);
-        };
+        cardEl.ondragstart = (e) => e.dataTransfer.setData('text/plain', index);
+
+        // Preview hover
+        cardEl.onmouseenter = (e) => showPreview(card, e);
+        cardEl.onmousemove = (e) => movePreview(e);
+        cardEl.onmouseleave = hidePreview;
+
         cardListEl.appendChild(cardEl);
       });
     }
@@ -93,15 +116,20 @@
         cardEl.className = 'card';
         cardEl.draggable = true;
         cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name} x${counts[card.name]}`;
-        cardEl.ondragstart = (e) => {
-          e.dataTransfer.setData('remove', index);
-        };
+        cardEl.ondragstart = (e) => e.dataTransfer.setData('remove', index);
+
+        // Preview hover
+        cardEl.onmouseenter = (e) => showPreview(card, e);
+        cardEl.onmousemove = (e) => movePreview(e);
+        cardEl.onmouseleave = hidePreview;
+
         deckListEl.appendChild(cardEl);
       });
       deckCounterEl.innerText = `Total Cards: ${deck.length}`;
       localStorage.setItem('deck', JSON.stringify(deck));
     }
 
+    // Drag & drop
     deckListEl.ondragover = (e) => e.preventDefault();
     deckListEl.ondrop = (e) => {
       e.preventDefault();
@@ -130,6 +158,23 @@
     function removeFromDeck(index) {
       deck.splice(index, 1);
       renderDeck();
+    }
+
+    // Preview functions
+    function showPreview(card, event) {
+      previewEl.style.display = 'block';
+      previewEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name}`;
+      movePreview(event);
+    }
+
+    function movePreview(event) {
+      const offset = 20;
+      previewEl.style.left = (event.pageX + offset) + 'px';
+      previewEl.style.top = (event.pageY + offset) + 'px';
+    }
+
+    function hidePreview() {
+      previewEl.style.display = 'none';
     }
 
     renderCards();
