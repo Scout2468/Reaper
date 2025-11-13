@@ -5,6 +5,8 @@
   <style>
     body { font-family: sans-serif; background: #f0f0f0; padding: 10px; }
     h1 { text-align: center; }
+    #filters { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 15px; }
+    #filters label { font-weight: bold; }
     .card-list, .deck { display: grid; gap: 10px; }
     .card-list { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); margin-bottom: 20px; justify-content: center; }
     .deck { grid-auto-flow: column; overflow-x: auto; padding: 10px; border: 2px solid #333; border-radius: 5px; background: #fff; }
@@ -65,6 +67,49 @@
 </head>
 <body>
   <h1>Union Arena Deck Builder</h1>
+
+  <!-- FILTER SECTION -->
+  <div id="filters">
+    <label>Color:
+      <select id="colorFilter">
+        <option value="">All</option>
+        <option value="Red">Red</option>
+        <option value="Blue">Blue</option>
+        <option value="Yellow">Yellow</option>
+      </select>
+    </label>
+
+    <label>IP:
+      <select id="ipFilter">
+        <option value="">All</option>
+        <option value="Jujutsu Kaisen">Jujutsu Kaisen</option>
+        <option value="Bleach">Bleach</option>
+        <option value="Black Clover">Black Clover</option>
+        <option value="Hunter x Hunter">Hunter x Hunter</option>
+        <option value="One Punch Man">One Punch Man</option>
+        <option value="Fairy Tail">Fairy Tail</option>
+        <option value="Original">Original</option>
+      </select>
+    </label>
+
+    <label>Type:
+      <select id="typeFilter">
+        <option value="">All</option>
+        <option value="Character">Character</option>
+        <option value="Action">Action</option>
+        <option value="Support">Support</option>
+      </select>
+    </label>
+
+    <label>Energy:
+      <select id="energyFilter">
+        <option value="">All</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+    </label>
+  </div>
 
   <h2>Available Cards</h2>
   <div class="card-list" id="cardList"></div>
@@ -129,9 +174,30 @@
     const addCardBtn = document.getElementById('addCardBtn');
     const removeCardBtn = document.getElementById('removeCardBtn');
 
-    function renderCards() {
+    // FILTER ELEMENTS
+    const colorFilter = document.getElementById('colorFilter');
+    const ipFilter = document.getElementById('ipFilter');
+    const typeFilter = document.getElementById('typeFilter');
+    const energyFilter = document.getElementById('energyFilter');
+
+    function applyFilters() {
+      let filteredCards = cards;
+
+      if (colorFilter.value) filteredCards = filteredCards.filter(c => c.color === colorFilter.value);
+      if (ipFilter.value) filteredCards = filteredCards.filter(c => c.ip === ipFilter.value);
+      if (typeFilter.value) filteredCards = filteredCards.filter(c => c.type === typeFilter.value);
+      if (energyFilter.value) filteredCards = filteredCards.filter(c => c.energy === parseInt(energyFilter.value));
+
+      renderCards(filteredCards);
+    }
+
+    [colorFilter, ipFilter, typeFilter, energyFilter].forEach(select => {
+      select.addEventListener('change', applyFilters);
+    });
+
+    function renderCards(list = cards) {
       cardListEl.innerHTML = '';
-      cards.forEach((card) => {
+      list.forEach((card) => {
         const cardEl = document.createElement('div');
         cardEl.className = 'card';
         cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name}`;
@@ -143,14 +209,8 @@
     function renderDeck() {
       deckListEl.innerHTML = '';
       const counts = {};
-      deck.forEach((card) => {
-        counts[card.name] = (counts[card.name] || 0) + 1;
-      });
-
-      const uniqueCards = Array.from(new Set(deck.map(c => c.name))).map(name =>
-        deck.find(c => c.name === name)
-      );
-
+      deck.forEach((card) => { counts[card.name] = (counts[card.name] || 0) + 1; });
+      const uniqueCards = Array.from(new Set(deck.map(c => c.name))).map(name => deck.find(c => c.name === name));
       uniqueCards.forEach((card) => {
         const cardEl = document.createElement('div');
         cardEl.className = 'card';
@@ -158,29 +218,21 @@
         cardEl.onclick = () => showCard(card);
         deckListEl.appendChild(cardEl);
       });
-
       deckCounterEl.innerText = `Total Cards: ${deck.length}`;
       localStorage.setItem('deck', JSON.stringify(deck));
     }
 
     function addToDeck(card) {
       const count = deck.filter(c => c.name === card.name).length;
-      if (count >= MAX_COPIES) {
-        alert(`Max ${MAX_COPIES} copies of ${card.name} allowed!`);
-        return;
-      }
+      if (count >= MAX_COPIES) { alert(`Max ${MAX_COPIES} copies of ${card.name} allowed!`); return; }
       deck.push(card);
       renderDeck();
     }
 
     function removeFromDeck(card) {
       const index = deck.findIndex(c => c.name === card.name);
-      if (index > -1) {
-        deck.splice(index, 1);
-        renderDeck();
-      } else {
-        alert(`${card.name} is not in your deck!`);
-      }
+      if (index > -1) { deck.splice(index, 1); renderDeck(); }
+      else { alert(`${card.name} is not in your deck!`); }
     }
 
     function showCard(card) {
@@ -189,22 +241,12 @@
       overlay.classList.add('active');
     }
 
-    function hideCard() {
-      overlay.classList.remove('active');
-    }
+    function hideCard() { overlay.classList.remove('active'); }
 
-    addCardBtn.onclick = () => {
-      if (currentCard) addToDeck(currentCard);
-    };
-
-    removeCardBtn.onclick = () => {
-      if (currentCard) removeFromDeck(currentCard);
-    };
-
+    addCardBtn.onclick = () => { if (currentCard) addToDeck(currentCard); };
+    removeCardBtn.onclick = () => { if (currentCard) removeFromDeck(currentCard); };
     closeOverlay.onclick = hideCard;
-    overlay.onclick = (e) => {
-      if (e.target === overlay) hideCard();
-    };
+    overlay.onclick = (e) => { if (e.target === overlay) hideCard(); };
 
     renderCards();
     renderDeck();
