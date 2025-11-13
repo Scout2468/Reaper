@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Blue Deck Builder</title>
+  <title>Union Arena Deck Builder</title>
   <style>
     body { font-family: sans-serif; background: #f0f0f0; padding: 10px; }
     h1 { text-align: center; }
@@ -25,6 +25,7 @@
       visibility: hidden;
       opacity: 0;
       transition: opacity 0.2s;
+      flex-direction: column;
     }
     .overlay.active {
       visibility: visible;
@@ -32,10 +33,11 @@
     }
     .overlay img {
       width: 300px;
-      max-height: 90%;
+      max-height: 80%;
       border-radius: 10px;
       border: 2px solid white;
       box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      margin-bottom: 10px;
     }
     .close-btn {
       position: absolute;
@@ -46,10 +48,23 @@
       cursor: pointer;
       font-weight: bold;
     }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+    button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .add-btn { background: #0077ff; color: white; }
+    .remove-btn { background: #ff3333; color: white; }
   </style>
 </head>
 <body>
-  <h1>Blue Deck</h1>
+  <h1>Union Arena Deck Builder</h1>
 
   <h2>Available Cards</h2>
   <div class="card-list" id="cardList"></div>
@@ -64,6 +79,10 @@
   <div id="cardOverlay" class="overlay">
     <span class="close-btn" id="closeOverlay">&times;</span>
     <img id="overlayImage" src="" alt="Card preview">
+    <div class="btn-group">
+      <button class="add-btn" id="addCardBtn">Add to Deck</button>
+      <button class="remove-btn" id="removeCardBtn">Remove from Deck</button>
+    </div>
   </div>
 
   <script>
@@ -77,6 +96,7 @@
 
     const MAX_COPIES = 4;
     let deck = JSON.parse(localStorage.getItem('deck') || '[]');
+    let currentCard = null;
 
     const cardListEl = document.getElementById('cardList');
     const deckListEl = document.getElementById('deckList');
@@ -84,19 +104,16 @@
     const overlay = document.getElementById('cardOverlay');
     const overlayImage = document.getElementById('overlayImage');
     const closeOverlay = document.getElementById('closeOverlay');
+    const addCardBtn = document.getElementById('addCardBtn');
+    const removeCardBtn = document.getElementById('removeCardBtn');
 
     function renderCards() {
       cardListEl.innerHTML = '';
-      cards.forEach((card, index) => {
+      cards.forEach((card) => {
         const cardEl = document.createElement('div');
         cardEl.className = 'card';
-        cardEl.draggable = true;
         cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name}`;
-        cardEl.ondragstart = (e) => e.dataTransfer.setData('text/plain', index);
-        cardEl.onclick = (e) => {
-          e.stopPropagation();
-          showCard(card.imageUrl);
-        };
+        cardEl.onclick = () => showCard(card);
         cardListEl.appendChild(cardEl);
       });
     }
@@ -104,36 +121,27 @@
     function renderDeck() {
       deckListEl.innerHTML = '';
       const counts = {};
-      deck.forEach((card, index) => {
+      deck.forEach((card) => {
         counts[card.name] = (counts[card.name] || 0) + 1;
+      });
+
+      const uniqueCards = Array.from(new Set(deck.map(c => c.name))).map(name =>
+        deck.find(c => c.name === name)
+      );
+
+      uniqueCards.forEach((card) => {
         const cardEl = document.createElement('div');
         cardEl.className = 'card';
-        cardEl.draggable = true;
         cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name} x${counts[card.name]}`;
-        cardEl.ondragstart = (e) => e.dataTransfer.setData('remove', index);
-        cardEl.onclick = () => removeFromDeck(index);
+        cardEl.onclick = () => showCard(card);
         deckListEl.appendChild(cardEl);
       });
+
       deckCounterEl.innerText = `Total Cards: ${deck.length}`;
       localStorage.setItem('deck', JSON.stringify(deck));
     }
 
-    deckListEl.ondragover = (e) => e.preventDefault();
-    deckListEl.ondrop = (e) => {
-      e.preventDefault();
-      const index = e.dataTransfer.getData('text/plain');
-      if (index !== '') addToDeck(parseInt(index));
-    };
-
-    cardListEl.ondragover = (e) => e.preventDefault();
-    cardListEl.ondrop = (e) => {
-      e.preventDefault();
-      const removeIndex = e.dataTransfer.getData('remove');
-      if (removeIndex !== '') removeFromDeck(parseInt(removeIndex));
-    };
-
-    function addToDeck(index) {
-      const card = cards[index];
+    function addToDeck(card) {
       const count = deck.filter(c => c.name === card.name).length;
       if (count >= MAX_COPIES) {
         alert(`Max ${MAX_COPIES} copies of ${card.name} allowed!`);
@@ -143,19 +151,33 @@
       renderDeck();
     }
 
-    function removeFromDeck(index) {
-      deck.splice(index, 1);
-      renderDeck();
+    function removeFromDeck(card) {
+      const index = deck.findIndex(c => c.name === card.name);
+      if (index > -1) {
+        deck.splice(index, 1);
+        renderDeck();
+      } else {
+        alert(`${card.name} is not in your deck!`);
+      }
     }
 
-    function showCard(imageUrl) {
-      overlayImage.src = imageUrl;
+    function showCard(card) {
+      currentCard = card;
+      overlayImage.src = card.imageUrl;
       overlay.classList.add('active');
     }
 
     function hideCard() {
       overlay.classList.remove('active');
     }
+
+    addCardBtn.onclick = () => {
+      if (currentCard) addToDeck(currentCard);
+    };
+
+    removeCardBtn.onclick = () => {
+      if (currentCard) removeFromDeck(currentCard);
+    };
 
     closeOverlay.onclick = hideCard;
     overlay.onclick = (e) => {
