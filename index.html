@@ -73,9 +73,11 @@
     <label>Color:
       <select id="colorFilter">
         <option value="">All</option>
-        <option value="Red">Red</option>
         <option value="Blue">Blue</option>
+        <option value="Red">Red</option>
         <option value="Yellow">Yellow</option>
+        <option value="Green">Green</option>
+        <option value="Purple">Purple</option>
       </select>
     </label>
 
@@ -87,7 +89,6 @@
         <option value="Black Clover">Black Clover</option>
         <option value="Hunter x Hunter">Hunter x Hunter</option>
         <option value="One Punch Man">One Punch Man</option>
-        <option value="Fairy Tail">Fairy Tail</option>
         <option value="Original">Original</option>
       </select>
     </label>
@@ -96,8 +97,8 @@
       <select id="typeFilter">
         <option value="">All</option>
         <option value="Character">Character</option>
-        <option value="Action">Action</option>
-        <option value="Support">Support</option>
+        <option value="Site">Site</option>
+        <option value="Event">Event</option>
       </select>
     </label>
 
@@ -135,19 +136,19 @@
       // --- OLD CARDS ---
       { name: "Aoi Todo", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Aoi%20Todo.PNG", color:"Blue", ip:"Jujutsu Kaisen", type:"Character", energy:2 },
       { name: "Divergent Fist", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Divergent%20Fist.PNG", color:"Blue", ip:"Jujutsu Kaisen", type:"Action", energy:1 },
-      { name: "Malevolent Shrine", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Malevolent%20Shrine.PNG", color:"Red", ip:"Jujutsu Kaisen", type:"Support", energy:2 },
+      { name: "Malevolent Shrine", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Malevolent%20Shrine.PNG", color:"Red", ip:"Jujutsu Kaisen", type:"Event", energy:2 },
       { name: "Sukuna", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Sukuna.PNG", color:"Red", ip:"Jujutsu Kaisen", type:"Character", energy:3 },
-      { name: "Sukuna's Finger", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Sukuna's%20Finger.PNG", color:"Red", ip:"Jujutsu Kaisen", type:"Action", energy:1 },
+      { name: "Sukuna's Finger", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Sukuna's%20Finger.PNG", color:"Red", ip:"Jujutsu Kaisen", type:"Event", energy:1 },
 
       // --- NEW CARDS ---
       { name: "Asta", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Asta.PNG", color:"Red", ip:"Black Clover", type:"Character", energy:2 },
-      { name: "Bomb 2", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Bomb%202.PNG", color:"Red", ip:"Original", type:"Action", energy:1 },
-      { name: "Bomb", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Bomb.PNG", color:"Red", ip:"Original", type:"Action", energy:1 },
+      { name: "Bomb 2", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Bomb%202.PNG", color:"Red", ip:"Original", type:"Event", energy:1 },
+      { name: "Bomb", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Bomb.PNG", color:"Red", ip:"Original", type:"Event", energy:1 },
       { name: "Byakuya Kuchiki 2", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Byakuya%20Kuchiki%202.PNG", color:"Blue", ip:"Bleach", type:"Character", energy:3 },
       { name: "Byakuya Kuchiki", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Byakuya%20Kuchiki.PNG", color:"Blue", ip:"Bleach", type:"Character", energy:3 },
       { name: "Gauche Adlai", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Gauche%20Adlai.PNG", color:"Blue", ip:"Black Clover", type:"Character", energy:2 },
       { name: "Genos", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Genos.PNG", color:"Yellow", ip:"One Punch Man", type:"Character", energy:3 },
-      { name: "Grey", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Grey.PNG", color:"Blue", ip:"Fairy Tail", type:"Character", energy:2 },
+      { name: "Grey", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Grey.PNG", color:"Blue", ip:"Black Clover", type:"Character", energy:2 },
       { name: "King 2", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/King%202.PNG", color:"Yellow", ip:"One Punch Man", type:"Character", energy:2 },
       { name: "King", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/King.PNG", color:"Yellow", ip:"One Punch Man", type:"Character", energy:2 },
       { name: "Kiriko", imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Kiriko.PNG", color:"Red", ip:"Original", type:"Character", energy:1 },
@@ -174,7 +175,6 @@
     const addCardBtn = document.getElementById('addCardBtn');
     const removeCardBtn = document.getElementById('removeCardBtn');
 
-    // FILTER ELEMENTS
     const colorFilter = document.getElementById('colorFilter');
     const ipFilter = document.getElementById('ipFilter');
     const typeFilter = document.getElementById('typeFilter');
