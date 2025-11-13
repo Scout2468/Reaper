@@ -20,62 +20,62 @@
   <div class="deck" id="deckList"></div>
 
   <script>
-    // Real sample cards with working English images
+    // 5 real Union Arena English cards
     const cards = [
       {
-        "id": "UA001",
+        "id": "UA10BT/AOT-1-007",
+        "name": "Levi",
+        "title": "Attack on Titan",
+        "type": "Character",
+        "apCost": 2,
+        "attack": 3,
+        "defense": 3,
+        "effect": "Destroy 1 enemy character",
+        "imageUrl": "https://www.unionarena-tcg.com/na/card_img/UA10BT_AOT-1-007_levismall.png"
+      },
+      {
+        "id": "UE04BT/CGH-1-001",
+        "name": "Kaname Ohgi",
+        "title": "Code Geass: Lelouch of the Rebellion",
+        "type": "Character",
+        "apCost": 2,
+        "attack": 2,
+        "defense": 2,
+        "effect": "Look at top 3 cards of your deck",
+        "imageUrl": "https://www.unionarena-tcg.com/na/card_img/UE04BT_CGH-1-001_kanameohgi.png"
+      },
+      {
+        "id": "UA02BT/HXH-1-003",
+        "name": "Gon Freecss",
+        "title": "Hunter × Hunter",
+        "type": "Character",
+        "apCost": 2,
+        "attack": 3,
+        "defense": 2,
+        "effect": "When this attacks, draw 1 card",
+        "imageUrl": "https://www.unionarena-tcg.com/na/card_img/UA02BT_HXH-1-003_gonfreecss.png"
+      },
+      {
+        "id": "UA01BT/BT-1-004",
         "name": "Ichigo Kurosaki",
-        "title": "Bleach",
+        "title": "Bleach: Thousand-Year Blood War",
         "type": "Character",
         "apCost": 2,
         "attack": 3,
         "defense": 2,
-        "effect": "Draw 1 card",
-        "imageUrl": "https://unionarena-tcg.com/en/card_img/bleach_001.png"
+        "effect": "Charge 1, then deal 1 damage to opponent",
+        "imageUrl": "https://www.unionarena-tcg.com/na/card_img/UA01BT_BT-1-004_ichigokurosaki.png"
       },
       {
-        "id": "UA002",
-        "name": "Rukia Kuchiki",
-        "title": "Bleach",
-        "type": "Character",
-        "apCost": 1,
-        "attack": 2,
-        "defense": 2,
-        "effect": "Freeze 1 enemy card",
-        "imageUrl": "https://unionarena-tcg.com/en/card_img/bleach_002.png"
-      },
-      {
-        "id": "UA003",
-        "name": "Monkey D. Luffy",
-        "title": "One Piece",
+        "id": "UE03BT/JJK-1-005",
+        "name": "Yuji Itadori",
+        "title": "Jujutsu Kaisen",
         "type": "Character",
         "apCost": 2,
         "attack": 3,
         "defense": 3,
-        "effect": "Increase attack by 1",
-        "imageUrl": "https://unionarena-tcg.com/en/card_img/onepiece_001.png"
-      },
-      {
-        "id": "UA004",
-        "name": "Naruto Uzumaki",
-        "title": "Naruto",
-        "type": "Character",
-        "apCost": 1,
-        "attack": 2,
-        "defense": 2,
-        "effect": "Draw 1 card",
-        "imageUrl": "https://unionarena-tcg.com/en/card_img/naruto_001.png"
-      },
-      {
-        "id": "UA005",
-        "name": "Sasuke Uchiha",
-        "title": "Naruto",
-        "type": "Character",
-        "apCost": 2,
-        "attack": 3,
-        "defense": 3,
-        "effect": "Discard 1 enemy card",
-        "imageUrl": "https://unionarena-tcg.com/en/card_img/naruto_002.png"
+        "effect": "Gain +1 attack this turn",
+        "imageUrl": "https://www.unionarena-tcg.com/na/card_img/UE03BT_JJK-1-005_yujitadori.png"
       }
     ];
 
