@@ -3,15 +3,43 @@
 <head>
   <title>Blue Deck Builder</title>
   <style>
-  body { font-family: sans-serif; background: #f0f0f0; padding: 10px; }
-  h1 { text-align: center; }
-  .card-list, .deck { display: grid; gap: 10px; justify-content: center; }
-  .card-list { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); margin-bottom: 20px; }
-  .deck { grid-auto-flow: column; overflow-x: auto; padding: 10px; border: 2px solid #333; border-radius: 5px; background: #fff; }
-  .card { text-align: center; cursor: pointer; transition: transform 0.1s, border 0.1s; }
-  .card img { width: 100%; border: 1px solid #333; border-radius: 5px; }
-  .card:hover { transform: scale(1.05); border: 2px solid #0077ff; }
-</style>
+    body { font-family: sans-serif; background: #f0f0f0; padding: 10px; }
+    h1 { text-align: center; }
+    .card-list { 
+      display: grid; 
+      gap: 10px; 
+      justify-content: center; 
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+      margin-bottom: 20px; 
+    }
+    .deck { 
+      display: grid; 
+      grid-auto-flow: column; 
+      gap: 10px; 
+      overflow-x: auto; 
+      padding: 10px; 
+      border: 2px solid #333; 
+      border-radius: 5px; 
+      background: #fff; 
+    }
+    .card { 
+      text-align: center; 
+      cursor: pointer; 
+      transition: transform 0.1s, border 0.1s; 
+      width: 100px; 
+    }
+    .card img { 
+      width: 100%; 
+      height: 140px; 
+      object-fit: cover; 
+      border: 1px solid #333; 
+      border-radius: 5px; 
+    }
+    .card:hover { 
+      transform: scale(1.05); 
+      border: 2px solid #0077ff; 
+    }
+  </style>
 </head>
 <body>
   <h1>Blue Deck</h1>
@@ -25,29 +53,28 @@
   </div>
 
   <script>
-    // Sample cards (replace these with your own images later)
     const cards = [
-  {
-    name: "Aoi Todo",
-    imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Aoi%20Todo.PNG",
-  },
-  {
-    name: "Divergent Fist",
-    imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Divergent%20Fist.PNG",
-  },
-  {
-    name: "Malevolent Shrine",
-    imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Malevolent%20Shrine.PNG",
-  },
-  {
-    name: "Sukuna",
-    imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Sukuna.PNG",
-  },
-  {
-    name: "Sukuna's Finger",
-    imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Sukuna's%20Finger.PNG",
-  },
-];
+      {
+        name: "Aoi Todo",
+        imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Aoi%20Todo.PNG",
+      },
+      {
+        name: "Divergent Fist",
+        imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Divergent%20Fist.PNG",
+      },
+      {
+        name: "Malevolent Shrine",
+        imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Malevolent%20Shrine.PNG",
+      },
+      {
+        name: "Sukuna",
+        imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Sukuna.PNG",
+      },
+      {
+        name: "Sukuna's Finger",
+        imageUrl: "https://raw.githubusercontent.com/Scout2468/Reaper/refs/heads/main/Images/Sukuna's%20Finger.PNG",
+      },
+    ];
 
     const deck = [];
     const cardListEl = document.getElementById('cardList');
@@ -58,7 +85,7 @@
       cards.forEach((card, index) => {
         const cardEl = document.createElement('div');
         cardEl.className = 'card';
-        cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name}<br><small>${card.title}</small>`;
+        cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name}`;
         cardEl.onclick = () => addToDeck(index);
         cardListEl.appendChild(cardEl);
       });
