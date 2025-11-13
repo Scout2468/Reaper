@@ -77,6 +77,7 @@
     ];
 
     const deck = [];
+    const MAX_COPIES = 4;
     const cardListEl = document.getElementById('cardList');
     const deckListEl = document.getElementById('deckList');
 
@@ -93,16 +94,28 @@
 
     function renderDeck() {
       deckListEl.innerHTML = '';
-      deck.forEach(card => {
+      deck.forEach((card, index) => {
         const cardEl = document.createElement('div');
         cardEl.className = 'card';
         cardEl.innerHTML = `<img src="${card.imageUrl}" alt="${card.name}"><br>${card.name}`;
+        cardEl.onclick = () => removeFromDeck(index);
         deckListEl.appendChild(cardEl);
       });
     }
 
     function addToDeck(index) {
-      deck.push(cards[index]);
+      const card = cards[index];
+      const count = deck.filter(c => c.name === card.name).length;
+      if (count >= MAX_COPIES) {
+        alert(`Max ${MAX_COPIES} copies of ${card.name} allowed!`);
+        return;
+      }
+      deck.push(card);
+      renderDeck();
+    }
+
+    function removeFromDeck(index) {
+      deck.splice(index, 1);
       renderDeck();
     }
 
