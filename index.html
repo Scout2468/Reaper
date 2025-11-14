@@ -13,7 +13,8 @@ select { margin-right: 10px; padding: 5px; }
 .card img { width: 100px; height: 140px; object-fit: cover; }
 .deck { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px; }
 .deckCard { width: 80px; cursor: pointer; border: 1px solid #333; padding: 2px; background: #eee; text-align: center; }
-.deckCard img { width: 60px; height: 84px; object-fit: cover; }
+.deckCard img { width: 60px; height: 84px; object-fit: cover; display: block; margin: 0 auto; }
+#deckCard div { margin-top: 2px; }
 #cardModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; flex-direction: column; }
 #modalContent { background: white; padding: 20px; border-radius: 10px; text-align: center; }
 #modalContent img { max-width: 200px; max-height: 280px; object-fit: cover; display: block; margin: 0 auto 10px; }
@@ -144,16 +145,32 @@ function displayCards() {
 
 function displayDeck() {
   deckContainer.innerHTML = '';
+
+  // Group deck by card name
+  const deckGroups = {};
   deck.forEach(card => {
+    if(deckGroups[card.name]) {
+      deckGroups[card.name].count += 1;
+    } else {
+      deckGroups[card.name] = { ...card, count: 1 };
+    }
+  });
+
+  Object.values(deckGroups).forEach(card => {
     const deckDiv = document.createElement('div');
     deckDiv.className = 'deckCard';
-    deckDiv.innerHTML = `<img src="${card.image}" alt="${card.name}"><div>${card.name}</div>`;
+    deckDiv.innerHTML = `<img src="${card.image}" alt="${card.name}"><div>${card.name}</div><div>×${card.count}</div>`;
+    
     deckDiv.addEventListener('click', () => {
-      deck = deck.filter(c => c !== card);
+      // Remove one copy of the card
+      const index = deck.findIndex(c => c.name === card.name);
+      if(index > -1) deck.splice(index, 1);
       displayDeck();
     });
+
     deckContainer.appendChild(deckDiv);
   });
+
   deckCount.textContent = `${deck.length} / 50`;
 }
 
