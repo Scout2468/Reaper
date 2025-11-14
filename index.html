@@ -16,10 +16,11 @@ select { margin-right: 10px; padding: 5px; }
 .deckCard img { width: 60px; height: 84px; object-fit: cover; display: block; margin: 0 auto; }
 #deckCard div { margin-top: 2px; }
 #cardModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; flex-direction: column; }
-#modalContent { background: white; padding: 20px; border-radius: 10px; text-align: center; }
+#modalContent { background: white; padding: 20px; border-radius: 10px; text-align: center; position: relative; }
 #modalContent img { max-width: 200px; max-height: 280px; object-fit: cover; display: block; margin: 0 auto 10px; }
 #modalContent button { margin: 5px; padding: 5px 10px; cursor: pointer; }
 #deckWarning { color: red; margin-top: 10px; font-weight: bold; }
+#closeModalBtnX { position: absolute; top: 5px; right: 10px; cursor: pointer; font-weight: bold; font-size: 18px; background: none; border: none; }
 </style>
 </head>
 <body>
@@ -61,11 +62,12 @@ select { margin-right: 10px; padding: 5px; }
 
 <div id="cardModal">
   <div id="modalContent">
+    <button id="closeModalBtnX">×</button>
     <img id="modalImage" src="" alt="Card View">
     <div id="modalName"></div>
     <div id="modalInfo"></div>
     <button id="addDeckBtn">Add to Deck</button>
-    <button id="closeModalBtn">Close</button>
+    <button id="removeDeckBtn">Remove from Deck</button>
   </div>
 </div>
 
@@ -110,7 +112,8 @@ const modalImage = document.getElementById('modalImage');
 const modalName = document.getElementById('modalName');
 const modalInfo = document.getElementById('modalInfo');
 const addDeckBtn = document.getElementById('addDeckBtn');
-const closeModalBtn = document.getElementById('closeModalBtn');
+const removeDeckBtn = document.getElementById('removeDeckBtn');
+const closeModalBtnX = document.getElementById('closeModalBtnX');
 
 let deck = [];
 let selectedCard = null;
@@ -146,7 +149,6 @@ function displayCards() {
 function displayDeck() {
   deckContainer.innerHTML = '';
 
-  // Group deck by card name
   const deckGroups = {};
   deck.forEach(card => {
     if(deckGroups[card.name]) {
@@ -162,10 +164,12 @@ function displayDeck() {
     deckDiv.innerHTML = `<img src="${card.image}" alt="${card.name}"><div>${card.name}</div><div>×${card.count}</div>`;
     
     deckDiv.addEventListener('click', () => {
-      // Remove one copy of the card
-      const index = deck.findIndex(c => c.name === card.name);
-      if(index > -1) deck.splice(index, 1);
-      displayDeck();
+      selectedCard = card;
+      modalImage.src = card.image;
+      modalName.textContent = card.name;
+      modalInfo.textContent = `${card.type} | ${card.color} | ${card.ip}`;
+      modal.style.display = 'flex';
+      deckWarning.textContent = '';
     });
 
     deckContainer.appendChild(deckDiv);
@@ -183,7 +187,6 @@ function isSameIP(card) {
   return deck[0].ip === card.ip;
 }
 
-// Modal buttons
 addDeckBtn.addEventListener('click', () => {
   if(deck.length >= 50){
     deckWarning.textContent = "Deck is full (50 cards max)";
@@ -202,7 +205,14 @@ addDeckBtn.addEventListener('click', () => {
   deckWarning.textContent = '';
 });
 
-closeModalBtn.addEventListener('click', () => {
+removeDeckBtn.addEventListener('click', () => {
+  const index = deck.findIndex(c => c.name === selectedCard.name);
+  if(index > -1) deck.splice(index, 1);
+  displayDeck();
+  modal.style.display = 'none';
+});
+
+closeModalBtnX.addEventListener('click', () => {
   modal.style.display = 'none';
 });
 
