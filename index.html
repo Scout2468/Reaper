@@ -107,38 +107,42 @@ const typeFilter = document.getElementById('typeFilter');
 let deck = [];
 let selectedCard = null;
 
-// Populate filters dynamically
-function populateFilters() {
-  const colors = [...new Set(cards.map(c => c.color))].sort();
-  colors.forEach(color => {
-    const opt = document.createElement('option');
-    opt.value = color; opt.textContent = color;
-    colorFilter.appendChild(opt);
-  });
+// Helpers
+function countCardInDeck(card){ return deck.filter(c=>c.name===card.name).length; }
+function isSameIP(card){ return deck.length===0 || deck[0].ip===card.ip; }
 
-  const ips = [...new Set(cards.map(c => c.ip))].sort();
-  ips.forEach(ip => {
-    const opt = document.createElement('option');
-    opt.value = ip; opt.textContent = ip;
-    ipFilter.appendChild(opt);
-  });
+// Dynamic filters based on current selection
+function updateFilters() {
+  const filteredCards = cards.filter(c => 
+    (!colorFilter.value || c.color === colorFilter.value) &&
+    (!ipFilter.value || c.ip === ipFilter.value) &&
+    (!typeFilter.value || c.type === typeFilter.value)
+  );
 
-  const types = [...new Set(cards.map(c => c.type))].sort();
-  types.forEach(type => {
-    const opt = document.createElement('option');
-    opt.value = type; opt.textContent = type;
-    typeFilter.appendChild(opt);
-  });
+  const colors = [...new Set(filteredCards.map(c=>c.color))].sort();
+  const ips = [...new Set(filteredCards.map(c=>c.ip))].sort();
+  const types = [...new Set(filteredCards.map(c=>c.type))].sort();
+
+  // Update Color
+  colorFilter.innerHTML = `<option value="">All Colors</option>` + colors.map(c=>`<option value="${c}">${c}</option>`).join('');
+  colorFilter.value = selectedFilters.color || '';
+
+  // Update IP
+  ipFilter.innerHTML = `<option value="">All IPs</option>` + ips.map(c=>`<option value="${c}">${c}</option>`).join('');
+  ipFilter.value = selectedFilters.ip || '';
+
+  // Update Type
+  typeFilter.innerHTML = `<option value="">All Types</option>` + types.map(c=>`<option value="${c}">${c}</option>`).join('');
+  typeFilter.value = selectedFilters.type || '';
 }
 
-// Display cards based on filters
 function displayCards() {
   cardsContainer.innerHTML = '';
-  const filteredCards = cards.filter(c => {
-    return (!colorFilter.value || c.color === colorFilter.value) &&
-           (!ipFilter.value || c.ip === ipFilter.value) &&
-           (!typeFilter.value || c.type === typeFilter.value);
-  });
+  const filteredCards = cards.filter(c => 
+    (!colorFilter.value || c.color === colorFilter.value) &&
+    (!ipFilter.value || c.ip === ipFilter.value) &&
+    (!typeFilter.value || c.type === typeFilter.value)
+  );
 
   filteredCards.forEach(card => {
     const cardDiv = document.createElement('div');
@@ -156,7 +160,7 @@ function displayCards() {
   });
 }
 
-// Display deck
+// Deck display
 function displayDeck() {
   deckContainer.innerHTML = '';
   const deckGroups = {};
@@ -183,10 +187,7 @@ function displayDeck() {
   deckCount.textContent = `${deck.length} / 50`;
 }
 
-// Deck rules
-function countCardInDeck(card){ return deck.filter(c=>c.name===card.name).length; }
-function isSameIP(card){ return deck.length===0 || deck[0].ip===card.ip; }
-
+// Event listeners
 addDeckBtn.addEventListener('click', ()=>{
   if(deck.length>=50){ deckWarning.textContent="Deck is full (50 cards max)"; return; }
   if(countCardInDeck(selectedCard)>=4){ deckWarning.textContent="You can only have 4 copies of a card"; return; }
@@ -202,12 +203,24 @@ removeDeckBtn.addEventListener('click', ()=>{
 
 closeModalBtnX.addEventListener('click', ()=>{ modal.style.display='none'; });
 
-colorFilter.addEventListener('change', displayCards);
-ipFilter.addEventListener('change', displayCards);
-typeFilter.addEventListener('change', displayCards);
+let selectedFilters = { color:'', ip:'', type:'' };
 
-populateFilters();
+function filterChange() {
+  selectedFilters.color = colorFilter.value;
+  selectedFilters.ip = ipFilter.value;
+  selectedFilters.type = typeFilter.value;
+  updateFilters();
+  displayCards();
+}
+
+colorFilter.addEventListener('change', filterChange);
+ipFilter.addEventListener('change', filterChange);
+typeFilter.addEventListener('change', filterChange);
+
+// Initial setup
+updateFilters();
 displayCards();
+displayDeck();
 </script>
 
 </body>
