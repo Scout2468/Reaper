@@ -18,6 +18,7 @@ select { margin-right: 10px; padding: 5px; }
 #modalContent { background: white; padding: 20px; border-radius: 10px; text-align: center; }
 #modalContent img { max-width: 200px; max-height: 280px; object-fit: cover; display: block; margin: 0 auto 10px; }
 #modalContent button { margin: 5px; padding: 5px 10px; cursor: pointer; }
+#deckWarning { color: red; margin-top: 10px; font-weight: bold; }
 </style>
 </head>
 <body>
@@ -51,10 +52,11 @@ select { margin-right: 10px; padding: 5px; }
   </select>
 </div>
 
-<div id="cardsContainer"></div>
-
-<h2>Your Deck</h2>
+<h2>Your Deck <span id="deckCount">0 / 50</span></h2>
 <div id="deck" class="deck"></div>
+<div id="deckWarning"></div>
+
+<div id="cardsContainer"></div>
 
 <div id="cardModal">
   <div id="modalContent">
@@ -100,6 +102,8 @@ const cards = [
 
 const cardsContainer = document.getElementById('cardsContainer');
 const deckContainer = document.getElementById('deck');
+const deckWarning = document.getElementById('deckWarning');
+const deckCount = document.getElementById('deckCount');
 const modal = document.getElementById('cardModal');
 const modalImage = document.getElementById('modalImage');
 const modalName = document.getElementById('modalName');
@@ -132,6 +136,7 @@ function displayCards() {
       modalName.textContent = card.name;
       modalInfo.textContent = `${card.type} | ${card.color} | ${card.ip}`;
       modal.style.display = 'flex';
+      deckWarning.textContent = '';
     });
     cardsContainer.appendChild(cardDiv);
   });
@@ -149,14 +154,35 @@ function displayDeck() {
     });
     deckContainer.appendChild(deckDiv);
   });
+  deckCount.textContent = `${deck.length} / 50`;
+}
+
+function countCardInDeck(card) {
+  return deck.filter(c => c.name === card.name).length;
+}
+
+function isSameIP(card) {
+  if(deck.length === 0) return true;
+  return deck[0].ip === card.ip;
 }
 
 // Modal buttons
 addDeckBtn.addEventListener('click', () => {
-  if (selectedCard && !deck.includes(selectedCard)) {
-    deck.push(selectedCard);
-    displayDeck();
+  if(deck.length >= 50){
+    deckWarning.textContent = "Deck is full (50 cards max)";
+    return;
   }
+  if(countCardInDeck(selectedCard) >= 4){
+    deckWarning.textContent = "You can only have 4 copies of a card";
+    return;
+  }
+  if(!isSameIP(selectedCard)){
+    deckWarning.textContent = "All cards must be from the same IP";
+    return;
+  }
+  deck.push(selectedCard);
+  displayDeck();
+  deckWarning.textContent = '';
 });
 
 closeModalBtn.addEventListener('click', () => {
@@ -167,7 +193,6 @@ document.getElementById('colorFilter').addEventListener('change', displayCards);
 document.getElementById('ipFilter').addEventListener('change', displayCards);
 document.getElementById('typeFilter').addEventListener('change', displayCards);
 
-// Initial display
 displayCards();
 </script>
 
